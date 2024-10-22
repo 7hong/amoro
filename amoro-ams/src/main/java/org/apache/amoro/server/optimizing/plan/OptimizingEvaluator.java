@@ -34,7 +34,6 @@ import org.apache.amoro.shade.guava32.com.google.common.collect.Maps;
 import org.apache.amoro.shade.guava32.com.google.common.collect.Sets;
 import org.apache.amoro.shade.jackson2.com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.amoro.table.MixedTable;
-import org.apache.amoro.utils.MixedTableUtil;
 import org.apache.amoro.utils.TablePropertyUtil;
 import org.apache.iceberg.PartitionSpec;
 import org.apache.iceberg.Snapshot;
@@ -117,9 +116,7 @@ public class OptimizingEvaluator {
     try (CloseableIterable<TableFileScanHelper.FileScanResult> results =
         tableFileScanHelper.scan()) {
       for (TableFileScanHelper.FileScanResult fileScanResult : results) {
-        PartitionSpec partitionSpec =
-            MixedTableUtil.getMixedTablePartitionSpecById(
-                mixedTable, fileScanResult.file().specId());
+        PartitionSpec partitionSpec = tableFileScanHelper.getSpec(fileScanResult.file().specId());
         StructLike partition = fileScanResult.file().partition();
         String partitionPath = partitionSpec.partitionToPath(partition);
         PartitionEvaluator evaluator =
